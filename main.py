@@ -14,9 +14,10 @@ import platform
 from kivy.core.window import Window
 from kivy.app import App
 from kivy.graphics.context_instructions import Color
-from kivy.graphics.vertex_instructions import Line, Quad, Triangle
+from kivy.graphics.vertex_instructions import Line, Quad,Triangle
 from kivy.properties import NumericProperty, Clock, ObjectProperty, StringProperty
 from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 
 Builder.load_file("menu.kv")
 
@@ -36,7 +37,7 @@ class MainWidget(RelativeLayout):
     H_LINES_SPACING = .1  # percentage in screen height
     horizontal_lines = []
 
-    SPEED = .8
+    SPEED = .4
     current_offset_y = 0
     current_y_loop = 0
 
@@ -52,7 +53,7 @@ class MainWidget(RelativeLayout):
     CHAR_HEIGHT = 0.035
     CHAR_BASE_Y = 0.04
     CHAR = None
-    char_coordinates = [(0, 0), (0, 0), (0, 0)]
+    char_coordinates = [(0, 0), (0, 0), (0, 0),(0,0)]
 
     state_game_over = False
     state_game_has_started = False
@@ -117,27 +118,26 @@ class MainWidget(RelativeLayout):
 
     def init_char(self):
         with self.canvas:
-            Color(0, 0, 0)
-            self.CHAR = Triangle()
+
+            self.CHAR = Image(source='images/cars.png')
 
     def update_char(self):
         center_x = self.width / 2
         base_y = self.CHAR_BASE_Y * self.height
         char_half_width = self.CHAR_WIDTH * self.width / 2
         char_height = self.CHAR_HEIGHT * self.height
+        self.CHAR.size = ("70","70")
         # ....
-        #    2
-        #  1   3
+        #  2   3
+        #  1   4
         # self.transform
         self.char_coordinates[0] = (center_x - char_half_width, base_y)
-        self.char_coordinates[1] = (center_x, base_y + char_height)
-        self.char_coordinates[2] = (center_x + char_half_width, base_y)
-
+        self.char_coordinates[1] = (center_x - char_half_width, base_y + char_height  )
+        self.char_coordinates[2] = (center_x + char_half_width, base_y + char_height )
+        self.char_coordinates[3] = (center_x + char_half_width, base_y)
         x1, y1 = self.transform(*self.char_coordinates[0])
-        x2, y2 = self.transform(*self.char_coordinates[1])
-        x3, y3 = self.transform(*self.char_coordinates[2])
 
-        self.CHAR.points = [x1, y1, x2, y2, x3, y3]
+        self.CHAR.pos = [x1, y1]
 
     def check_char_collision(self):
         for i in range(0, len(self.tiles_coordinates)):
